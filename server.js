@@ -50,5 +50,7 @@ const data = [];
 app.post('/weather', addWeather);
 
 function addWeather (req, res){
-    data.push(req.body);
+    //data.push(req.body);
+    //projectData = req.body;
+    Object.assign(projectData, req.body);
 };
