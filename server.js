@@ -27,7 +27,6 @@ const port = 8000;
 
 const server = app.listen(port, listening);
 function listening(){
-    console.log(server);
     console.log(`running on localhost: ${port}`);
 };
 
@@ -38,11 +37,18 @@ function sendData (request, response) {
   response.send(projectData);
 };
 
-// POST whether information
+// POST route
+app.post('/add', callBack);
+
+function callBack(req,res){
+  res.send('POST received');
+};
+
+// POST weather information
 const data = [];
 
-app.post('/whether', addWhether);
+app.post('/weather', addWeather);
 
-function addWhether (req, res){
+function addWeather (req, res){
     data.push(req.body);
 };

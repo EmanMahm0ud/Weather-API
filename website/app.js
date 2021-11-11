@@ -1,30 +1,41 @@
 /* Global Variables */
 let zipcode = document.getElementById("zip");
 let feeling = document.getElementById("feelings");
-let entryHolder = document.getElementById("entryHolder");
 let date = document.getElementById("date");
 let temp = document.getElementById("temp");
 let content = document.getElementById("content");
+let currentTemp;  // to save temperature from weather api
 
 // Create a new date instance dynamically with JS
 let d = new Date();
 let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
 
-// on click generate button
 function showResult() {
-    let feel = feeling.value;
-    console.log(feel);
-    date.innerHTML = newDate;
-    content.innerHTML = feel;
+    date.innerHTML = "Date is : " + newDate;
+    temp.innerHTML = "Temprature is : " + currentTemp;
+    content.innerHTML = "Feeling is : " + feeling.value;
 }
 
-document.getElementById("generate").addEventListener("click", function() {
-    let feel = feeling.value;
-    console.log(feel);
-    date.innerHTML = newDate;
-    content.innerHTML = feel;
-    postData('/addWhether', {temperature: 'cat', date: d, user_response: feel});
+// on click generate button
+document.getElementById("generate").addEventListener("click", async function() {
+    getWeather().then(function() {
+        postData('/weather', {temperature: currentTemp, date: newDate, user_response: feeling.value});
+        showResult();
+    });
 });
+
+// get from OpenWeatherMap API
+const getWeather = async ()=>{
+
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode.value}&appid=9ac4304a1d172712576f27f0f7700cbb`)
+    try {
+        const data = await res.json();
+        currentTemp = data.main.temp;
+    } catch(error) {
+        console.log("error", error);
+        // appropriately handle the error
+    }
+}
 
 /* Function to POST data */
 const postData = async ( url = '', data = {})=>{
@@ -47,5 +58,3 @@ const postData = async ( url = '', data = {})=>{
         // appropriately handle the error
     }
 }
-  
-// TODO-Call Function
