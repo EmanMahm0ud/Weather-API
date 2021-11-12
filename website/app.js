@@ -5,8 +5,8 @@ let date = document.getElementById("date");
 let temp = document.getElementById("temp");
 let content = document.getElementById("content");
 let currentTemp;  // to save temperature from weather api
-let result = {temperature: 'currentTemp', date: "11", user_response: 'feeling.value'};
-const apiKey = "9ac4304a1d172712576f27f0f7700cbb";
+let result = {};
+const apiKey = "9ac4304a1d172712576f27f0f7700cbb&units=metric";
 
 // Create a new date instance dynamically with JS
 let d = new Date();
@@ -20,13 +20,13 @@ function showResult() {
 
 // on click generate button
 document.getElementById("generate").addEventListener("click", function() {
-    getWeather().then(
+    getWeather().then(()=>{
         postData('/weather', {temperature: currentTemp, date: newDate, user_response: feeling.value})
-    ).then(
-        getFromServer
-    ).then(
-        showResult
-    );
+    }).then(()=>{
+        return getFromServer()
+    }).then(()=>{
+        showResult()
+    });
 });
 
 // get from OpenWeatherMap API
@@ -36,6 +36,7 @@ const getWeather = async ()=>{
     try {
         const data = await res.json();
         currentTemp = data.main.temp;
+        return currentTemp;
     } catch(error) {
         console.log("error", error);
         // appropriately handle the error
@@ -44,7 +45,7 @@ const getWeather = async ()=>{
 
 /* Function to POST data */
 const postData = async ( url = '', data = {})=>{
-    
+    console.log(data);
     const response = await fetch(url, {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     credentials: 'same-origin', // include, *same-origin, omit
@@ -77,4 +78,3 @@ const getFromServer = async ()=>{
         // appropriately handle the error
     }
 }
-//postData('/weather', {temperature: 'currentTemp', date: newDate, user_response: 'feeling.value'});
